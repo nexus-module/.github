@@ -1,0 +1,103 @@
+name: Pre-Commit
+
+on:
+  workflow_call:
+    inputs:
+      terraform-docs-version:
+        description: "Version of terraform-docs to use"
+        required: false
+        type: string
+        default: "v0.16.0"
+      tflint-version:
+        description: "Version of tflint to use"
+        required: false
+        type: string
+        default: "v0.50.3"
+
+jobs:
+  collectInputs:
+    name: Collect workflow inputs
+    runs-on: ubuntu-latest
+    outputs:
+      directories: ${{ steps.dirs.outputs.directories }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v6.0.2
+
+      - name: Get root directories
+        id: dirs
+        uses: clowdhaus/terraform-composite-actions/directories@6d08774c0c29dc0f0734e1fdd774a75c65f19cdc # v1.14.0
+
+  preCommitMinVersions:
+    name: Min TF pre-commit
+    needs: collectInputs
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: ${{ fromJson(needs.collectInputs.outputs.directories) }}
+    steps:
+      # https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
+      - name: Delete huge unnecessary tools folder
+        run: |
+          rm -rf /opt/hostedtoolcache/CodeQL
+          rm -rf /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk
+          rm -rf /opt/hostedtoolcache/Ruby
+          rm -rf /opt/hostedtoolcache/go
+
+      - name: Checkout
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v6.0.2
+
+      - name: Terraform min/max versions
+        id: minMax
+        uses: clowdhaus/terraform-min-max@7d7f1ed7de7b7edca97d57a75e95c2e96854bbba # v2.1.0
+        with:
+          directory: ${{ matrix.directory }}
+
+      - name: Pre-commit Terraform ${{ steps.minMax.outputs.minVersion }}
+        # Run only validate pre-commit check on min version supported
+        if: ${{ matrix.directory !=  '.' }}
+        uses: clowdhaus/terraform-composite-actions/pre-commit@6d08774c0c29dc0f0734e1fdd774a75c65f19cdc # v1.14.0
+        with:
+          terraform-version: ${{ steps.minMax.outputs.minVersion }}
+          tflint-version: ${{ inputs.tflint-version }}
+          args: "terraform_validate --color=always --show-diff-on-failure --files ${{ matrix.directory }}/*"
+
+      - name: Pre-commit Terraform ${{ steps.minMax.outputs.minVersion }}
+        # Run only validate pre-commit check on min version supported
+        if: ${{ matrix.directory ==  '.' }}
+        uses: clowdhaus/terraform-composite-actions/pre-commit@6d08774c0c29dc0f0734e1fdd774a75c65f19cdc # v1.14.0
+        with:
+          terraform-version: ${{ steps.minMax.outputs.minVersion }}
+          tflint-version: ${{ inputs.tflint-version }}
+          args: "terraform_validate --color=always --show-diff-on-failure --files $(ls *.tf)"
+
+  preCommitMaxVersion:
+    name: Max TF pre-commit
+    runs-on: ubuntu-latest
+    needs: collectInputs
+    steps:
+      # https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
+      - name: Delete huge unnecessary tools folder
+        run: |
+          rm -rf /opt/hostedtoolcache/CodeQL
+          rm -rf /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk
+          rm -rf /opt/hostedtoolcache/Ruby
+          rm -rf /opt/hostedtoolcache/go
+
+      - name: Checkout
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+
+      - name: Terraform min/max versions
+        id: minMax
+        uses: clowdhaus/terraform-min-max@7d7f1ed7de7b7edca97d57a75e95c2e96854bbba # v2.1.0
+
+      - name: Pre-commit Terraform ${{ steps.minMax.outputs.maxVersion }}
+        uses: clowdhaus/terraform-composite-actions/pre-commit@6d08774c0c29dc0f0734e1fdd774a75c65f19cdc # v1.14.0
+        with:
+          terraform-version: ${{ steps.minMax.outputs.maxVersion }}
+          tflint-version: ${{ inputs.tflint-version }}
+          terraform-docs-version: ${{ inputs.terraform-docs-version }}
+          install-hcledit: true

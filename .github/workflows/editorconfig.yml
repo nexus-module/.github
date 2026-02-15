@@ -1,0 +1,19 @@
+name: EditorConfig Checker
+
+on:
+  workflow_call:
+
+jobs:
+  editorconfig:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use editorConfig Checker
+        uses: editorconfig-checker/action-editorconfig-checker@main
+
+      - name: Run editorConfig checker
+        run: editorconfig-checker

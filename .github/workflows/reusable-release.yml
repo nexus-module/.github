@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      semantic-release-version:
+        description: "Version of semantic-release to use"
+        required: false
+        type: string
+        default: "23.0.2"
+      changelog-version:
+        description: "Version of @semantic-release/changelog to use"
+        required: false
+        type: string
+        default: "6.0.3"
+      git-version:
+        description: "Version of @semantic-release/git to use"
+        required: false
+        type: string
+        default: "10.0.1"
+      conventionalcommits-version:
+        description: "Version of conventional-changelog-conventionalcommits to use"
+        required: false
+        type: string
+        default: "7.0.2"
+    secrets:
+      PAT_GITHUB:
+        required: true
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    # Skip running release workflow on forks
+    if: github.repository_owner == 'devops-ia'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Release
+        uses: cycjimmy/semantic-release-action@f2440c16d28af49e6ccfc38e0aa3ffe6e59e3adf # v6
+        with:
+          semantic_version: ${{ inputs.semantic-release-version }}
+          extra_plugins: |
+            @semantic-release/changelog@${{ inputs.changelog-version }}
+            @semantic-release/git@${{ inputs.git-version }}
+            conventional-changelog-conventionalcommits@${{ inputs.conventionalcommits-version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}

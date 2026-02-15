@@ -1,0 +1,10 @@
+# This is a list of individuals or teams that are responsible for code in this repository.
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners for more information.
+
+# Owners of the entire repository
+*       @devops-ia
+
+# Owners of specific directories or files
+# /docs/  @docs-team
+# /src/   @dev-team
+# /tests/ @qa-team

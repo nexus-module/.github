@@ -1,0 +1,109 @@
+name: Bug report
+description: Create a bug report
+title: "[module-name] Bug title"
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Please be cautious with the sensitive information/logs while filing the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug a clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: input
+    id: terraform-version
+    attributes:
+      label: What's your Terraform version?
+      description: Output of `terraform version`
+    validations:
+      required: true
+
+  - type: input
+    id: provider-version
+    attributes:
+      label: What's your Nexus provider version?
+      description: Version of datadrivers/nexus provider (e.g., 2.5.0)
+    validations:
+      required: true
+
+  - type: input
+    id: module-version
+    attributes:
+      label: Module version
+      description: Enter the version of the terraform-nexus-* module that you encountered this bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: explain-bug
+    attributes:
+      label: Explain bug
+      description: Explain what happened.
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected-result
+    attributes:
+      label: What you expected to happen?
+      description: Enter what you expected to happen.
+    validations:
+      required: false
+
+  - type: textarea
+    id: reproduce-bug
+    attributes:
+      label: How to reproduce it?
+      description: Explain step-by-step if is possible.
+    validations:
+      required: false
+
+  - type: textarea
+    id: terraform-code
+    attributes:
+      label: Relevant Terraform configuration
+      description: Provide the relevant Terraform code (HCL) that reproduces the issue. Remove sensitive data.
+      placeholder: |
+        module "nexus_security" {
+          source = "nexus-module/security/nexus"
+          version = "1.0.0"
+
+          nexus_security_role = [
+            {
+              name = "example"
+              # ...
+            }
+          ]
+        }
+      render: hcl
+    validations:
+      required: false
+
+  - type: textarea
+    id: terraform-command
+    attributes:
+      label: Enter the command that failed
+      description: Enter the Terraform command that produced the error.
+      placeholder: terraform apply
+    validations:
+      required: true
+
+  - type: textarea
+    id: terraform-output
+    attributes:
+      label: Terraform output/error messages
+      description: Paste the error messages or unexpected output from Terraform.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: more-info
+    attributes:
+      label: More info
+    validations:
+      required: false
