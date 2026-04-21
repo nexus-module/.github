@@ -31,6 +31,10 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     # Skip running release workflow on forks
     if: github.repository_owner == 'devops-ia'
     steps:

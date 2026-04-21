@@ -18,6 +18,8 @@ jobs:
   collectInputs:
     name: Collect workflow inputs
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       directories: ${{ steps.dirs.outputs.directories }}
     steps:
@@ -32,6 +34,8 @@ jobs:
     name: Min TF pre-commit
     needs: collectInputs
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         directory: ${{ fromJson(needs.collectInputs.outputs.directories) }}
@@ -74,6 +78,8 @@ jobs:
   preCommitMaxVersion:
     name: Max TF pre-commit
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: collectInputs
     steps:
       # https://github.com/orgs/community/discussions/25678#discussioncomment-5242449
@@ -89,6 +95,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
+          persist-credentials: false
 
       - name: Terraform min/max versions
         id: minMax
