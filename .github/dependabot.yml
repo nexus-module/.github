@@ -8,7 +8,16 @@ updates:
     labels:
       - enhancement
       - dependency-management
+    assignees:
+      - ialejandro
+      - amartingarcia
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     commit-message:
-      prefix: "chore"
-    reviewers:
-      - nexus-module/devops-ia
+      prefix: chore
+      include: scope
+    rebase-strategy: auto
+    pull-request-branch-name:
+      separator: "-"

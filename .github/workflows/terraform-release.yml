@@ -36,7 +36,7 @@ jobs:
       issues: write
       pull-requests: write
     # Skip running release workflow on forks
-    if: github.repository_owner == 'devops-ia'
+    if: github.repository_owner == 'nexus-module'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -45,7 +45,7 @@ jobs:
           fetch-depth: 0
 
       - name: Release
-        uses: cycjimmy/semantic-release-action@f2440c16d28af49e6ccfc38e0aa3ffe6e59e3adf # v6
+        uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
         with:
           semantic_version: ${{ inputs.semantic-release-version }}
           extra_plugins: |
