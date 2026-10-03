@@ -13,6 +13,8 @@ Comprehensive Terraform modules for Sonatype Nexus Repository Manager configurat
 | terraform-nexus-privilege | Access privileges management | [Registry](https://registry.terraform.io/modules/nexus-module/privilege/nexus) |
 | terraform-nexus-script | Groovy script deployment | [Registry](https://registry.terraform.io/modules/nexus-module/script/nexus) |
 | terraform-nexus-mail | Email server configuration | [Registry](https://registry.terraform.io/modules/nexus-module/mail/nexus) |
+| terraform-nexus-capability | Capabilities (outreach, firewall audit, HTTP client, ...) | [Registry](https://registry.terraform.io/modules/nexus-module/capability/nexus) |
+| terraform-nexus-iqserver | IQ Server connection | [Registry](https://registry.terraform.io/modules/nexus-module/iqserver/nexus) |
 
 All modules use the [Nexus Provider](https://registry.terraform.io/providers/datadrivers/nexus) (datadrivers/nexus).
 

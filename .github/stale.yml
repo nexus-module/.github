@@ -1,40 +1,39 @@
-# Number of days of inactivity before an issue becomes stale
-daysUntilStale: 90
+# Keep in sync with .github/workflows/github-stale.yml (actions/stale)
 
-# Number of days of inactivity before an stale issue is closed
-daysUntilClose: 30
+# Number of days of inactivity before an issue or PR becomes stale
+daysUntilStale: 30
 
-# Label to use when marking an issue as stale
+# Number of days of inactivity before a stale issue or PR is closed
+daysUntilClose: 10
+
+# Issues or PRs with these labels will never be considered stale
+exemptLabels:
+  - bug
+  - wip
+  - on-hold
+
+# Issues or PRs that are part of a milestone will never be considered stale
+exemptMilestones: true
+
+# Label to use when marking an issue or PR as stale
 staleLabel: stale
-
-# Limit to only `issues` or `pulls`
-only: issues
 
 issues:
   # Comment to post when marking an issue as stale.
   markComment: >
-    This issue has been automatically marked as stale because it has not had
-    recent activity. It will be closed if no further activity occurs. Thank you
-    for your contributions.
+    This issue has been automatically marked as stale because it has been open 30 days
+    with no activity. Remove stale label or comment or this issue will be closed in 10 days
 
   # Comment to post when closing a stale issue.
   closeComment: >
-    This issue has been automatically closed because it has not had recent
-    activity since being marked as stale.
+    This issue was automatically closed because of stale in 10 days
 
 pulls:
   # Comment to post when marking a PR as stale.
   markComment: >
-    This PR has been automatically marked as stale because it has not had
-    recent activity. It will be closed if no further activity occurs. Thank you
-    for your contributions.
-
-    To track this PR (even if closed), please open a corresponding issue if one
-    does not already exist.
+    This PR has been automatically marked as stale because it has been open 30 days
+    with no activity. Remove stale label or comment or this PR will be closed in 10 days
 
   # Comment to post when closing a stale PR.
   closeComment: >
-    This PR has been automatically closed because it has not had recent
-    activity since being marked as stale.
-
-    Please reopen when work resumes.
+    This PR was automatically closed because of stale in 10 days

@@ -1,0 +1,32 @@
+name: "Auto-merge"
+
+on:
+  workflow_call:
+    inputs:
+      merge-method:
+        description: "Merge method used by auto-merge (merge, squash, rebase)"
+        required: false
+        type: string
+        default: squash
+    secrets:
+      PAT_GITHUB:
+        required: true
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    permissions: {}
+    # Only PRs from Dependabot or org members/collaborators, never external forks
+    if: >-
+      !github.event.pull_request.draft && (
+        github.event.pull_request.user.login == 'dependabot[bot]' ||
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association)
+      )
+    steps:
+      # PAT instead of GITHUB_TOKEN so the merge push triggers the release workflow
+      - name: Enable auto-merge
+        run: gh pr merge --auto --"$MERGE_METHOD" "$PR_URL"
+        env:
+          GH_TOKEN: ${{ secrets.PAT_GITHUB }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          MERGE_METHOD: ${{ inputs.merge-method }}

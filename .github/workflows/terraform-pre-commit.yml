@@ -108,3 +108,42 @@ jobs:
           tflint-version: ${{ inputs.tflint-version }}
           terraform-docs-version: ${{ inputs.terraform-docs-version }}
           install-hcledit: true
+
+  terraformTest:
+    name: Terraform test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_wrapper: false
+
+      # Native tests use mock providers (Terraform >= 1.7); no Nexus instance needed
+      - name: Run terraform test in every module with tests/
+        run: |
+          status=0
+          for dir in $(find . -path '*/tests/*.tftest.hcl' -not -path '*/.terraform/*' | sed 's|/tests/[^/]*$||' | sort -u); do
+            echo "::group::$dir"
+            terraform -chdir="$dir" init -backend=false -input=false >/dev/null && terraform -chdir="$dir" test || status=1
+            echo "::endgroup::"
+          done
+          exit $status
+
+  preCommitResult:
+    name: Pre-commit result
+    if: always()
+    needs:
+      - preCommitMinVersions
+      - preCommitMaxVersion
+      - terraformTest
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Check results
+        if: needs.preCommitMinVersions.result != 'success' || needs.preCommitMaxVersion.result != 'success' || needs.terraformTest.result != 'success'
+        run: exit 1
