@@ -1,0 +1,13 @@
+name: Enable Auto-merge
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  enable-auto-merge:
+    uses: ./.github/workflows/github-automerge.yml
+    with:
+      merge-method: squash
+    secrets:
+      PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
